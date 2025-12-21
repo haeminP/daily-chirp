@@ -90,9 +90,15 @@ export default function SignInPage() {
           Login with GitHub
         </Button>
       </div>
-      <div>
+      <div className="flex flex-col gap-2">
         <Link className="text-muted-foreground hover:underline" to={"/sign-up"}>
           Don't have an account? Please signup.
+        </Link>
+        <Link
+          className="text-muted-foreground hover:underline"
+          to={"/forget-password"}
+        >
+          Forgot your password?
         </Link>
       </div>
     </div>
