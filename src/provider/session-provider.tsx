@@ -9,9 +9,11 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   const setSession = useSetSession();
   const isSessionLoaded = useIsSessionLoaded();
 
-  const { data: profile, isLoading: isProfileLoading } = useProfileData(
-    session?.user.id
-  );
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isPending,
+  } = useProfileData(session?.user.id);
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
