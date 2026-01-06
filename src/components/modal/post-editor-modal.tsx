@@ -8,6 +8,7 @@ import { useCreatePost } from "@/hooks/mutations/post/use-create-post";
 import { toast } from "sonner";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { useSession } from "@/store/session";
+import { useOpenAlertModal } from "@/store/alert-modal";
 
 type Image = {
   file: File;
@@ -17,12 +18,26 @@ type Image = {
 export default function PostEditorModal() {
   const session = useSession();
   const { isOpen, close } = usePostEditorModal();
+  const openAlertModal = useOpenAlertModal(); //AlertModal을 오픈하는 액션 함수
+
   const [content, setContent] = useState("");
   const [images, setImages] = useState<Image[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCloseModal = () => {
+    if (content !== "" || images.length !== 0) {
+      openAlertModal({
+        title: "You haven't finished writing your post",
+        description:
+          "Leaving this page will discard everything you've written.",
+        onPositive: () => {
+          close();
+        },
+      });
+
+      return; // 조건문 바깥의 close() 함수는 사용자가 뭔가 작성했을 때는 실행되지 않도록
+    }
     close();
   };
 
