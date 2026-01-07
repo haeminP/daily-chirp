@@ -8,6 +8,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import type { types } from "util";
+import { formatTimePassed } from "@/lib/time";
 
 export default function PostItem(post: Post) {
   return (
@@ -26,7 +27,7 @@ export default function PostItem(post: Post) {
               {post.author.nickname}
             </div>
             <div className="text-muted-foreground text-sm">
-              {new Date(post.created_at).toLocaleString()}
+              {formatTimePassed(post.created_at)}
             </div>
           </div>
         </div>
