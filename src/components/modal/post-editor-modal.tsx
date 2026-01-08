@@ -17,7 +17,7 @@ type Image = {
 
 export default function PostEditorModal() {
   const session = useSession();
-  const { isOpen, close } = usePostEditorModal();
+  const postEditorModal = usePostEditorModal();
   const openAlertModal = useOpenAlertModal(); //AlertModal을 오픈하는 액션 함수
 
   const [content, setContent] = useState("");
@@ -35,17 +35,25 @@ export default function PostEditorModal() {
   }, [content]);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!postEditorModal.isOpen) {
       images.forEach((image) => {
         // delete images from memory when the modal is closed
         URL.revokeObjectURL(image.previewUrl);
       });
       return;
     }
+
+    if (postEditorModal.type === "CREATE") {
+      setContent("");
+      setImages([]);
+    } else {
+      // "EDIT"
+      setContent(postEditorModal.content);
+      setImages([]); // 이전에 선택한 이미지 초기화
+    }
+
     textareaRef.current?.focus();
-    setContent("");
-    setImages([]);
-  }, [isOpen]);
+  }, [postEditorModal.isOpen]);
 
   const handleCloseModal = () => {
     if (content !== "" || images.length !== 0) {
@@ -54,18 +62,18 @@ export default function PostEditorModal() {
         description:
           "Leaving this page will discard everything you've written.",
         onPositive: () => {
-          close();
+          postEditorModal.actions.close();
         },
       });
 
       return; // 조건문 바깥의 close() 함수는 사용자가 뭔가 작성했을 때는 실행되지 않도록
     }
-    close();
+    postEditorModal.actions.close();
   };
 
   const { mutate: createPost, isPending: isCreatePostPending } = useCreatePost({
     onSuccess: () => {
-      close();
+      postEditorModal.actions.close();
     },
     onError: (error) => {
       toast.error("Cannot create a post", {
@@ -106,7 +114,7 @@ export default function PostEditorModal() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleCloseModal}>
+    <Dialog open={postEditorModal.isOpen} onOpenChange={handleCloseModal}>
       <DialogContent className="max-h-[90vh]">
         <DialogTitle>Share your story</DialogTitle>
         <textarea
@@ -125,6 +133,24 @@ export default function PostEditorModal() {
           multiple
           className="hidden"
         />
+
+        {postEditorModal.isOpen && postEditorModal.type === "EDIT" && (
+          <Carousel>
+            <CarouselContent>
+              {postEditorModal.imageUrls?.map((url) => (
+                <CarouselItem key={url} className="basis-2/5">
+                  <div className="relative">
+                    <img
+                      src={url}
+                      className="h-full w-full rounded-sm object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        )}
+
         {images.length > 0 && (
           <Carousel>
             <CarouselContent>
@@ -147,16 +173,20 @@ export default function PostEditorModal() {
             </CarouselContent>
           </Carousel>
         )}
-        <Button
-          onClick={() => {
-            fileInputRef.current?.click();
-          }}
-          disabled={isCreatePostPending}
-          variant={"outline"}
-          className="cursor-pointer"
-        >
-          <ImageIcon /> Add Images
-        </Button>
+
+        {postEditorModal.isOpen && postEditorModal.type === "CREATE" && (
+          <Button
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
+            disabled={isCreatePostPending}
+            variant={"outline"}
+            className="cursor-pointer"
+          >
+            <ImageIcon /> Add Images
+          </Button>
+        )}
+
         <Button
           disabled={isCreatePostPending}
           onClick={handleCreatePostClick}
