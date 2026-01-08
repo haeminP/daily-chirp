@@ -132,12 +132,14 @@ export default function PostEditorModal() {
     URL.revokeObjectURL(image.previewUrl); // delete image from memory
   };
 
+  const isPending = isCreatePostPending || isUpdatePostPending;
+
   return (
     <Dialog open={postEditorModal.isOpen} onOpenChange={handleCloseModal}>
       <DialogContent className="max-h-[90vh]">
         <DialogTitle>Share your story</DialogTitle>
         <textarea
-          disabled={isCreatePostPending}
+          disabled={isPending}
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -198,7 +200,7 @@ export default function PostEditorModal() {
             onClick={() => {
               fileInputRef.current?.click();
             }}
-            disabled={isCreatePostPending}
+            disabled={isPending}
             variant={"outline"}
             className="cursor-pointer"
           >
@@ -207,7 +209,7 @@ export default function PostEditorModal() {
         )}
 
         <Button
-          disabled={isCreatePostPending}
+          disabled={isPending}
           onClick={handleSavePostClick}
           className="cursor-pointer"
         >
