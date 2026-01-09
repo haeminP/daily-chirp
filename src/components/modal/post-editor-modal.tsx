@@ -102,7 +102,10 @@ export default function PostEditorModal() {
         userId: session!.user.id,
       });
     } else {
-      if (content === postEditorModal.content) return;
+      if (content === postEditorModal.content) {
+        postEditorModal.actions.close();
+        return;
+      }
       updatePost({
         id: postEditorModal.postId,
         content: content,
