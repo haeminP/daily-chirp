@@ -1,6 +1,11 @@
 import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
 import { usePostEditorModal } from "@/store/post-editor-modal";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
@@ -157,6 +162,7 @@ export default function PostEditorModal() {
           multiple
           className="hidden"
         />
+        <DialogDescription></DialogDescription>
 
         {postEditorModal.isOpen && postEditorModal.type === "EDIT" && (
           <Carousel>
