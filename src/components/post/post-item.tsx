@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/carousel";
 import type { types } from "util";
 import { formatTimePassed } from "@/lib/time";
-import EditPostItemButton from "./edit-post-item-button";
+import EditPostButton from "./edit-post-button";
+import DeletePostButton from "./delete-post-button";
 
 export default function PostItem(post: Post) {
   return (
@@ -34,10 +35,8 @@ export default function PostItem(post: Post) {
         </div>
         {/*1-2. Edit/Delete button */}
         <div className="text-muted-foreground flex text-sm">
-          <EditPostItemButton {...post} />
-          <Button className="cursor-pointer" variant={"ghost"}>
-            Delete
-          </Button>
+          <EditPostButton {...post} />
+          <DeletePostButton />
         </div>
       </div>
 
