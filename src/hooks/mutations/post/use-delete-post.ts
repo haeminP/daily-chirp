@@ -1,3 +1,4 @@
+import { deleteImagesInPath } from "@/api/image";
 import { deletePost } from "@/api/post";
 import type { useMutationCallback } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -5,8 +6,13 @@ import { useMutation } from "@tanstack/react-query";
 export function useDeletePost(callbacks?: useMutationCallback) {
   return useMutation({
     mutationFn: deletePost,
-    onSuccess: () => {
+    onSuccess: async (deletedPost) => {
       if (callbacks?.onSuccess) callbacks.onSuccess();
+
+      // delete images of the deleted post
+      if (deletedPost.image_urls && deletedPost.image_urls.length > 0) {
+        await deleteImagesInPath(`${deletedPost.author_id}/${deletedPost.id}`);
+      }
     },
     onError: (error) => {
       if (callbacks?.onError) callbacks.onError(error);
