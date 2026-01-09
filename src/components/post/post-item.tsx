@@ -11,8 +11,26 @@ import type { types } from "util";
 import { formatTimePassed } from "@/lib/time";
 import EditPostButton from "./edit-post-button";
 import DeletePostButton from "./delete-post-button";
+import { useSession } from "@/store/session";
+import { usePostByIdData } from "@/hooks/queries/use-post-by-id-data";
+import Loader from "../loader";
+import Fallback from "../fallback";
 
-export default function PostItem(post: Post) {
+export default function PostItem({ postId }: { postId: number }) {
+  const session = useSession();
+  const userId = session?.user.id;
+
+  const {
+    data: post,
+    isPending,
+    error,
+  } = usePostByIdData({ postId, type: "FEED" });
+
+  if (isPending) return <Loader />;
+  if (error) return <Fallback />;
+
+  const isMine = post.author_id === userId;
+
   return (
     <div className="flex flex-col gap-4 border-b pb-8">
       {/* 1. User information, edit/delete button */}
@@ -35,8 +53,12 @@ export default function PostItem(post: Post) {
         </div>
         {/*1-2. Edit/Delete button */}
         <div className="text-muted-foreground flex text-sm">
-          <EditPostButton {...post} />
-          <DeletePostButton id={post.id} />
+          {isMine && (
+            <>
+              <EditPostButton {...post} />
+              <DeletePostButton id={post.id} />
+            </>
+          )}
         </div>
       </div>
 
