@@ -25,5 +25,7 @@ export function useInfinitePostsData() {
       if (lastPage.length < PAGE_SIZE) return undefined; // 마지막 페이지 도달 시
       return allPages.length; // 페이지 번호가 1씩 증가하도록 설정됨
     },
+
+    staleTime: Infinity, // avoid constant refetching
   });
 }
