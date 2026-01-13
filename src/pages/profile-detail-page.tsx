@@ -1,3 +1,4 @@
+import PostFeed from "@/components/post/post-feed";
 import ProfileInfo from "@/components/profile/profile-info";
 import { Navigate, useParams } from "react-router";
 
@@ -11,8 +12,10 @@ export default function ProfileDetailPage() {
   // 유저가 있는 경우 수파베이스에서 유저의 프로필 데이터를 불러와 화면에 렌더링
 
   return (
-    <div>
+    <div className="flex flex-col gap-10">
       <ProfileInfo userId={userId} />
+      <div className="border-b"></div>
+      <PostFeed authorId={userId} />
     </div>
   );
 }

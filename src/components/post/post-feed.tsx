@@ -5,9 +5,9 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { useInfinitePostsData } from "@/hooks/queries/use-infinite-posts-data";
 
-export default function PostFeed() {
+export default function PostFeed({ authorId }: { authorId?: string }) {
   const { data, error, isPending, fetchNextPage, isFetchingNextPage } =
-    useInfinitePostsData();
+    useInfinitePostsData(authorId);
 
   const { ref, inView } = useInView(); // 레퍼런스 객체 하나, inView라는 boolean 값 하나 반환
   // 아래의 빈 div에 ref를 연결해주면, div 태그를 인터섹션 옵저버가 관측하고
