@@ -8,6 +8,7 @@ import { useSession } from "@/store/session";
 import defaultAvatar from "@/assets/default-avatar.jpg";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { Link } from "react-router";
+import { signOut } from "@/api/auth";
 
 export default function ProfileButton() {
   const session = useSession();
@@ -31,7 +32,10 @@ export default function ProfileButton() {
           </Link>
         </PopoverClose>
         <PopoverClose asChild>
-          <div className="hover:bg-muted cursor-pointer px-4 py-3 text-sm">
+          <div
+            onClick={signOut}
+            className="hover:bg-muted cursor-pointer px-4 py-3 text-sm"
+          >
             Logout
           </div>
         </PopoverClose>
