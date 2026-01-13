@@ -1,0 +1,57 @@
+import { useSession } from "@/store/session";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { useProfileData } from "@/hooks/queries/use-profile-data";
+import Fallback from "../fallback";
+import Loader from "../loader";
+import defaultAvatar from "@/assets/default-avatar.jpg";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useProfileEditorModal } from "@/store/profile-editor-modal";
+export default function ProfileEditorModal() {
+  const session = useSession();
+  const {
+    data: profile,
+    error: fetchProfileError,
+    isPending: isFetchProfilePending,
+  } = useProfileData(session?.user.id);
+
+  const store = useProfileEditorModal();
+  const {
+    isOpen,
+    actions: { close },
+  } = store;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={close}>
+      <DialogContent className="flex flex-col gap-5">
+        <DialogTitle>Edit Profile</DialogTitle>
+        {fetchProfileError && <Fallback />}
+        {isFetchProfilePending && <Loader />}
+        {!fetchProfileError && !isFetchProfilePending && (
+          <>
+            {/* edit profile image UI */}
+            <div className="flex flex-col gap-2">
+              <div className="text-muted-foreground">Profile Image</div>
+              <img
+                src={profile.avatar_url || defaultAvatar}
+                className="h-20 w-20 cursor-pointer rounded-full object-cover"
+              />
+            </div>
+            {/* edit nickname UI */}
+            <div className="flex flex-col gap-2">
+              <div className="text-muted-foreground">Nickname</div>
+              <Input />
+            </div>
+
+            {/* edit bio UI */}
+            <div className="flex flex-col gap-2">
+              <div className="text-muted-foreground">Bio</div>
+              <Input />
+            </div>
+            <Button className="cursor-pointer">Save</Button>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
