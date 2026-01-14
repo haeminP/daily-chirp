@@ -36,6 +36,14 @@ export default function ProfileEditorModal() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen && profile) {
+      setNickname(profile.nickname);
+      setBio(profile.bio);
+      setAvatarImage(null); // 어차피 새롭게 선택할 예정이므로 null 값으로 초기화
+    }
+  }, [profile, isOpen]);
+
   const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
@@ -82,13 +90,16 @@ export default function ProfileEditorModal() {
             {/* edit nickname UI */}
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground">Nickname</div>
-              <Input />
+              <Input
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+              />
             </div>
 
             {/* edit bio UI */}
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground">Bio</div>
-              <Input />
+              <Input value={bio} onChange={(e) => setBio(e.target.value)} />
             </div>
             <Button className="cursor-pointer">Save</Button>
           </>
