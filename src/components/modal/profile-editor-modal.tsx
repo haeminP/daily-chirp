@@ -8,6 +8,8 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useProfileEditorModal } from "@/store/profile-editor-modal";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useUpdateProfile } from "@/hooks/mutations/profile/use-update-profile";
+import { toast } from "sonner";
 
 type Image = { file: File; previewUrl: string };
 export default function ProfileEditorModal() {
@@ -23,6 +25,18 @@ export default function ProfileEditorModal() {
     isOpen,
     actions: { close },
   } = store;
+
+  const { mutate: updateProfile, isPending: isUpdateProfilePending } =
+    useUpdateProfile({
+      onSuccess: () => {
+        close();
+      },
+      onError: (error) => {
+        toast.error("Cannot edit the profile.", {
+          position: "top-center",
+        });
+      },
+    });
 
   const [avatarImage, setAvatarImage] = useState<Image | null>(null);
   const [nickname, setNickname] = useState("");
@@ -59,6 +73,16 @@ export default function ProfileEditorModal() {
     });
   };
 
+  const handleUpdateClick = () => {
+    if (nickname.trim() === "") return;
+    updateProfile({
+      userId: session!.user.id,
+      nickname,
+      bio,
+      avatarImageFile: avatarImage?.file,
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={close}>
       <DialogContent className="flex flex-col gap-5">
@@ -76,6 +100,7 @@ export default function ProfileEditorModal() {
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={isUpdateProfilePending}
               />
               <img
                 onClick={() => {
@@ -93,15 +118,26 @@ export default function ProfileEditorModal() {
               <Input
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
+                disabled={isUpdateProfilePending}
               />
             </div>
 
             {/* edit bio UI */}
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground">Bio</div>
-              <Input value={bio} onChange={(e) => setBio(e.target.value)} />
+              <Input
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                disabled={isUpdateProfilePending}
+              />
             </div>
-            <Button className="cursor-pointer">Save</Button>
+            <Button
+              onClick={handleUpdateClick}
+              disabled={isUpdateProfilePending}
+              className="cursor-pointer"
+            >
+              Save
+            </Button>
           </>
         )}
       </DialogContent>
