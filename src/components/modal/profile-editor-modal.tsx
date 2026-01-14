@@ -7,6 +7,9 @@ import defaultAvatar from "@/assets/default-avatar.jpg";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useProfileEditorModal } from "@/store/profile-editor-modal";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+
+type Image = { file: File; previewUrl: string };
 export default function ProfileEditorModal() {
   const session = useSession();
   const {
@@ -21,6 +24,33 @@ export default function ProfileEditorModal() {
     actions: { close },
   } = store;
 
+  const [avatarImage, setAvatarImage] = useState<Image | null>(null);
+  const [nickname, setNickname] = useState("");
+  const [bio, setBio] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      if (avatarImage) URL.revokeObjectURL(avatarImage.previewUrl);
+    }
+  }, [isOpen]);
+
+  const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+
+    if (avatarImage) {
+      // remove saved images from memory to prevent memory leak
+      URL.revokeObjectURL(avatarImage.previewUrl);
+    }
+
+    setAvatarImage({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={close}>
       <DialogContent className="flex flex-col gap-5">
@@ -32,8 +62,20 @@ export default function ProfileEditorModal() {
             {/* edit profile image UI */}
             <div className="flex flex-col gap-2">
               <div className="text-muted-foreground">Profile Image</div>
+              <input
+                onChange={handleSelectImage}
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+              />
               <img
-                src={profile.avatar_url || defaultAvatar}
+                onClick={() => {
+                  if (fileInputRef.current) fileInputRef.current.click();
+                }}
+                src={
+                  avatarImage?.previewUrl || profile.avatar_url || defaultAvatar
+                }
                 className="h-20 w-20 cursor-pointer rounded-full object-cover"
               />
             </div>
