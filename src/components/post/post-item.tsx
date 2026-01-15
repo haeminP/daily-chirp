@@ -18,15 +18,17 @@ import Fallback from "../fallback";
 import LikePostButton from "./like-post-button";
 import { Link } from "react-router";
 
-export default function PostItem({ postId }: { postId: number }) {
+export default function PostItem({
+  postId,
+  type,
+}: {
+  postId: number;
+  type: "FEED" | "DETAIL";
+}) {
   const session = useSession();
   const userId = session?.user.id;
 
-  const {
-    data: post,
-    isPending,
-    error,
-  } = usePostByIdData({ postId, type: "FEED" });
+  const { data: post, isPending, error } = usePostByIdData({ postId, type });
 
   if (isPending) return <Loader />;
   if (error) return <Fallback />;
@@ -47,9 +49,11 @@ export default function PostItem({ postId }: { postId: number }) {
             />
           </Link>
           <div>
-            <div className="font-bold hover:underline">
-              {post.author.nickname}
-            </div>
+            <Link to={`profile/${post.author_id}`}>
+              <div className="font-bold hover:underline">
+                {post.author.nickname}
+              </div>
+            </Link>
             <div className="text-muted-foreground text-sm">
               {formatTimePassed(post.created_at)}
             </div>
@@ -69,9 +73,11 @@ export default function PostItem({ postId }: { postId: number }) {
       {/* 2. Contents and Image Carousel */}
       <div className="flex cursor-pointer flex-col gap-5">
         {/*2-1. Contents */}
-        <div className="line-clamp-2 break-words whitespace-pre-wrap">
-          {post.content}
-        </div>
+        <Link to={`/post/${post.id}`}>
+          <div className="line-clamp-2 break-words whitespace-pre-wrap">
+            {post.content}
+          </div>
+        </Link>
         {/* 2-1. Image Carousel */}
         <Carousel>
           <CarouselContent>
@@ -99,10 +105,12 @@ export default function PostItem({ postId }: { postId: number }) {
         />
 
         {/* 3-2. Comments button */}
-        <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
-          <MessageCircle className="h-4 w-4" />
-          <span>Comments</span>
-        </div>
+        <Link to={`/post/${post.id}`}>
+          <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+            <MessageCircle className="h-4 w-4" />
+            <span>Comments</span>
+          </div>
+        </Link>
       </div>
     </div>
   );
