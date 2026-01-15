@@ -36,7 +36,9 @@ export default function PostItem({
   const isMine = post.author_id === userId;
 
   return (
-    <div className="flex flex-col gap-4 border-b pb-8">
+    <div
+      className={`flex flex-col gap-4 pb-8 ${type === "FEED" && "border-b"}`}
+    >
       {/* 1. User information, edit/delete button */}
       <div className="flex justify-between">
         {/*1-1. User information */}
@@ -73,11 +75,15 @@ export default function PostItem({
       {/* 2. Contents and Image Carousel */}
       <div className="flex cursor-pointer flex-col gap-5">
         {/*2-1. Contents */}
-        <Link to={`/post/${post.id}`}>
-          <div className="line-clamp-2 break-words whitespace-pre-wrap">
-            {post.content}
-          </div>
-        </Link>
+        {type === "FEED" ? (
+          <Link to={`/post/${post.id}`}>
+            <div className="line-clamp-2 break-words whitespace-pre-wrap">
+              {post.content}
+            </div>
+          </Link>
+        ) : (
+          <div className="break-words whitespace-pre-wrap">{post.content}</div>
+        )}
         {/* 2-1. Image Carousel */}
         <Carousel>
           <CarouselContent>
@@ -105,12 +111,14 @@ export default function PostItem({
         />
 
         {/* 3-2. Comments button */}
-        <Link to={`/post/${post.id}`}>
-          <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
-            <MessageCircle className="h-4 w-4" />
-            <span>Comments</span>
-          </div>
-        </Link>
+        {type === "FEED" && (
+          <Link to={`/post/${post.id}`}>
+            <div className="hover:bg-muted flex cursor-pointer items-center gap-2 rounded-xl border-1 p-2 px-4 text-sm">
+              <MessageCircle className="h-4 w-4" />
+              <span>Comments</span>
+            </div>
+          </Link>
+        )}
       </div>
     </div>
   );
