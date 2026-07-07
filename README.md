@@ -2,7 +2,6 @@
 
 Short-form social feed. Post updates, attach images, like and comment on others' posts.
 
-![feed](public/screenshots/social-feed.png)
 
 ## Tech Stack
 
