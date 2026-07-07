@@ -2,7 +2,7 @@
 
 Short-form social feed. Post updates, attach images, like and comment on others' posts.
 
-![feed](public/screenshots/feed.png)
+![feed](public/screenshots/social-feed.png)
 
 ## Tech Stack
 
@@ -21,7 +21,7 @@ Short-form social feed. Post updates, attach images, like and comment on others'
 
 ### Feed
 
-![feed](public/screenshots/feed.png)
+![feed](public/screenshots/social-feed.png)
 
 Paginated post list with infinite scroll. Each post shows author info, relative timestamp, content preview (2-line clamp), and an image carousel for multi-image posts.
 
