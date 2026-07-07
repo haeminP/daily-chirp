@@ -1,54 +1,90 @@
-# React + TypeScript + Vite
+# Daily Chirp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Short-form social feed. Post updates, attach images, like and comment on others' posts.
 
-Currently, two official plugins are available:
+![feed](public/screenshots/feed.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## Expanding the ESLint configuration
+| Layer | Stack |
+|---|---|
+| Frontend | React 19, TypeScript, Vite |
+| Styling | Tailwind CSS v4 |
+| Routing | React Router v7 |
+| Server State | TanStack Query v5 |
+| Client State | Zustand |
+| UI Components | Radix UI, Lucide Icons |
+| Backend | Supabase (Auth, PostgreSQL, Storage) |
+| Deployment | Vercel |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Feed
+
+![feed](public/screenshots/feed.png)
+
+Paginated post list with infinite scroll. Each post shows author info, relative timestamp, content preview (2-line clamp), and an image carousel for multi-image posts.
+
+### Post Detail
+
+![post-detail](public/screenshots/post-detail.png)
+
+Full post content with comments. Authors can edit or delete their own posts.
+
+### Likes and Comments
+
+Like any post with optimistic UI updates. Leave comments with real-time count display.
+
+### Profile
+
+![profile](public/screenshots/profile.png)
+
+User profile page showing avatar, nickname, and that user's posts filtered from the feed. Edit your own profile info.
+
+### Auth
+
+![sign-in](public/screenshots/sign-in.png)
+
+Email/password sign-up and sign-in. Password reset via email. Route guards split pages into guest-only and member-only layouts.
+
+## Project Structure
+
+```
+src/
+  api/            # Supabase query functions (post, comment, profile, auth, image)
+  components/
+    comment/      # CommentList, CommentItem, CommentEditor
+    layout/       # GlobalLayout, GuestOnlyLayout, MemberOnlyLayout
+    modal/        # Post editor, profile editor modals
+    post/         # PostFeed, PostItem, CreatePost, EditPost, DeletePost, LikePost
+    profile/      # ProfileInfo, EditProfileButton
+    ui/           # Button, Input, Textarea, Dialog, Carousel, etc.
+  hooks/
+    mutations/    # auth, post, comment, profile mutation hooks
+    queries/      # useInfinitePostsData, usePostByIdData, useProfileData, useCommentsData
+  pages/          # Route-level page components
+  provider/       # SessionProvider, ModalProvider
+  store/          # Zustand stores (session, modals)
+  lib/            # Supabase client, utils, constants, error handling
+  types.ts        # Post, Comment, Profile type definitions
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm install
+npm run dev
+```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+Create a `.env.local` file with your Supabase credentials:
+
+```
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Regenerate database types after schema changes:
+
+```bash
+npm run type-gen
 ```
